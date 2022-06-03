@@ -9,6 +9,7 @@ const initialState = {
   colors: [],
 };
 
+
 export default function filtersReducer(state = initialState, action) {
   // The reducer normally looks at the action type field to decide what happens.
   switch (action.type) {
@@ -51,5 +52,18 @@ export default function filtersReducer(state = initialState, action) {
   */
     default:
       return state;
+  }
+}
+
+// Action Creators
+export const statusFilterChanged = (status) => ({
+  type: 'filters/statusFilterChanged',
+  payload: status,
+})
+
+export const colorFilterChanged = (color, changeType) => {
+  return {
+    type: 'filters/colorFilterChanged',
+    payload: { color, changeType}
   }
 }
