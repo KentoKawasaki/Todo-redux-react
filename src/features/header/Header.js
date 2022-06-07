@@ -5,34 +5,54 @@ import { saveNewTodo } from '../todos/todosSlice'
 
 const Header = () => {
   const [text, setText] = useState("");
+  const [status, setStatus] = useState('idle')
   const dispatch = useDispatch();
 
   const handleChange = (e) => setText(e.target.value);
 
-  const handleKeyDown = (e) => {
-    const trimmedText = text.trim();
-    if (e.which === 13 && trimmedText) {
-      // dispatch({ type: "todos/todoAdded", payload: trimmedText });
+  // const handleKeyDown = (e) => {
+  //   const trimmedText = text.trim();
+  //   if (e.which === 13 && trimmedText) {
+  //     // dispatch({ type: "todos/todoAdded", payload: trimmedText });
 
-      // Create the thunk function with the thunk function itself
-      // const saveNewTodoThunk = saveNewTodo(trimmedText)
-      dispatch(saveNewTodo(trimmedText))
-      // clear out the text input
-      setText("");
+  //     // Create the thunk function with the thunk function itself
+  //     // const saveNewTodoThunk = saveNewTodo(trimmedText)
+  //     dispatch(saveNewTodo(trimmedText))
+  //     // clear out the text input
+  //     setText("");
+  //   }
+  // };
+
+  const handleKeyDown = async e => {
+    // If the user pressed the Enter key:
+    const trimmedText = text.trim()
+    if (e.which === 13 && trimmedText) {
+      // Create and dispatch the thunk function itself
+      setStatus('loading')
+      // Wait for the promise returned by saveNewTodo
+      await dispatch(saveNewTodo(trimmedText))
+      setText('')
+      setStatus('idle')
     }
-  };
+  }
+
+  let isLoading = status === 'loading'
+  let placeholder = isLoading ? '' : 'What needs to be done?'
+  let loader = isLoading ? <div className="loader" /> : null
 
   return (
     <header className="header">
       <input
         className="new-todo"
         type="text"
-        placeholder="What needs to be done?"
+        placeholder={placeholder}
         autoFocus={true}
         value={text}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        disabled={isLoading}
       />
+      {loader}
     </header>
     
   );
